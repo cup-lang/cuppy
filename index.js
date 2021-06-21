@@ -10,9 +10,7 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
     client.guilds.fetch('842863266585903144').then(guild => {
-        guild.channels.fetch('842863477818523708').then(channel => {
-            channel.messages.fetch('842864078790721577');
-        });
+        guild.channels.cache.get('842863477818523708').messages.fetch('842864078790721577');
     });
 
     client.user.setPresence({
