@@ -9,10 +9,16 @@ const client = new Client({
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
+    client.guilds.fetch('842863266585903144').then(guild => {
+        guild.channels.fetch('842863477818523708').then(channel => {
+            channel.messages.fetch('842864078790721577');
+        });
+    });
+
     client.user.setPresence({
         activities: [{
-            name: 'you 👀',
-            type: 'WATCHING',
+            name: 'discord.gg/cup',
+            type: 'PLAYING',
         }]
     });
 });
@@ -28,6 +34,22 @@ client.on('message', message => {
                 );
                 break;
         }
+    }
+});
+
+client.on('messageReactionAdd', (reaction, user) => {
+    if (reaction.message.id === '842864078790721577') {
+        const guild = reaction.message.guild;
+        const role = reaction.message.guild.roles.cache.find(r => r.id === '842870468598824981');
+        guild.members.cache.find(member => member.id === user.id).roles.add(role);
+    }
+});
+
+client.on('messageReactionRemove', (reaction, user) => {
+    if (reaction.message.id === '842864078790721577') {
+        const guild = reaction.message.guild;
+        const role = guild.roles.cache.find(r => r.id === '842870468598824981');
+        guild.members.cache.find(member => member.id === user.id).roles.remove(role);
     }
 });
 
