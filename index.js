@@ -2,7 +2,8 @@ const fs = require('fs');
 const { Client, Intents } = require('discord.js');
 const client = new Client({
     intents: [
-        Intents.NON_PRIVILEGED,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
     ]
 });
 
