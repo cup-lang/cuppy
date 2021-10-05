@@ -7,6 +7,34 @@ const client = new Client({
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
     ]
 });
+const WebSocket = require('ws');
+let ws;
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
+function connectToPlayground() {
+    ws = new WebSocket('wss://cup-lang.org');
+    ws.on('message', (data) => {
+        const type = data.charCodeAt();
+        data = data.substr(1).split('\u0000');
+        switch (type) {
+            case 2: // Compilation result
+                const out = data[1].split(data[0])[1];
+                client.guilds.fetch('842863266585903144').then(guild => {
+                    guild.channels.cache.get('842869766422003802').send(out);
+                });
+                break;
+        }
+    });
+    ws.onclose = () => {
+        setTimeout(connectToPlayground, 1000);
+    };
+}
+connectToPlayground();
+
+function playgroundRunCode(code) {
+    ws.send(`\u0000${code}`);
+}
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -23,16 +51,16 @@ client.on('ready', () => {
     });
 });
 
-client.on('message', message => {
-    if (message.content[0] === '!' || message.content[0] === '?') {
-        switch (message.content.substr(1)) {
-            case 'help':
-                message.channel.send(
-                    'Available commands:\n' +
-                    '\t`build [CODE]`\0\0\0\0\0\0Compile given code\n' +
-                    '\t`run [CODE]`\0\0\0\0\0\0\0\0\0Compile and run given code'
-                );
-                break;
+client.on('messageCreate', message => {
+    if (message.content[0] === '!') {
+        if (message.content.substr(1, 4) === 'help') {
+            message.channel.send(
+                'Available commands:\n' +
+                '\t`build [CODE]`     Compile given code\n' +
+                '\t`run [CODE]`       Compile and run given code'
+            );
+        } else if (message.content.substr(1, 4) === 'run ') {
+            playgroundRunCode(message.content.substr(5));
         }
     }
 });
