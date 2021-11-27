@@ -15,8 +15,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 function connectToPlayground() {
     ws = new WebSocket('wss://cup-lang.org');
     ws.on('message', (data) => {
-        const type = data.charCodeAt();
-        data = data.substr(1).split('\u0000');
+        const type = data.data.charCodeAt();
+        data = data.data.substr(1).split('\u0000');
         switch (type) {
             case 2: // Compilation result
                 const out = data[1].split(data[0])[1];
