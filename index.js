@@ -22,8 +22,8 @@ function connectToPlayground() {
             case 2: // Compilation result
                 data = data[1].split(data[0]);
                 client.guilds.fetch('842863266585903144').then(guild => {
-                    out = data[1].replaceAll('\033[0m', '**');
-                    out = data[1].replaceAll('\033[32m', '**');
+                    out = data[0].replaceAll('\033[0m', '**');
+                    out = data[0].replaceAll('\033[32m', '**');
                     const embed = new MessageEmbed()
                         .setColor('#008000')
                         .setAuthor('Requested by: ___', 'https://cdn.discordapp.com/embed/avatars/0.png')
