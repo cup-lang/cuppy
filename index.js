@@ -22,8 +22,8 @@ function connectToPlayground() {
             case 2: // Compilation result
                 data = data[1].split(data[0]);
                 client.guilds.fetch('842863266585903144').then(guild => {
-                    out = data[0].replaceAll('\033[0m', '**');
-                    out = data[0].replaceAll('\033[32m', '**');
+                    data[0] = data[0].replaceAll('\033[0m', '**');
+                    data[0] = data[0].replaceAll('\033[32m', '**');
                     const embed = new MessageEmbed()
                         .setColor('#008000')
                         .setAuthor('Requested by: ___', 'https://cdn.discordapp.com/embed/avatars/0.png')
@@ -71,9 +71,17 @@ client.on('messageCreate', message => {
             );
         } else if (msg.startsWith('run')) {
             if (msg.length < 5) {
-                message.channel.send('error: missing [CODE]');
+                message.channel.send('error: missing argument [CODE]');
             } else {
-                playgroundRunCode(msg.substr(4));
+                msg = msg.substr(4);
+                if (msg[0] == '`' && msg[msg.length - 1] == '`') {
+                    if (msg[1] == '`'&& msg[msg.length - 2] == '`' && msg[2] == '`'&& msg[msg.length - 3] == '`') {
+                        msg = msg.substring(3, msg.length - 3);
+                    } else {
+                        msg = msg.substring(1, msg.length - 1);
+                    }
+                }
+                playgroundRunCode(msg);
             }
         }
     }
