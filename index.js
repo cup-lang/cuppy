@@ -60,7 +60,7 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', message => {
-    const msg = message.content;
+    let msg = message.content;
     if (msg[0] === '!') {
         msg = msg.substr(1);
         if (msg.startsWith('help')) {
