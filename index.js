@@ -27,8 +27,7 @@ function connectToPlayground() {
                     const embed = new MessageEmbed()
                         .setColor('#008000')
                         .setAuthor('Requested by: ___', 'https://cdn.discordapp.com/embed/avatars/0.png')
-                        .setDescription(data[0])
-                        .setTimestamp();
+                        .setDescription(data[0]);
                     guild.channels.cache.get('842869766422003802').send({ content: `\`\`\`${data[1]}\`\`\``, embeds: [embed] });
                 });
                 break;
