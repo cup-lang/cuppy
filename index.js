@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { Client, Intents } = require('discord.js');
+const { MessageEmbed, Client, Intents } = require('discord.js');
 const client = new Client({
     intents: [
         Intents.FLAGS.GUILDS,
@@ -20,9 +20,16 @@ function connectToPlayground() {
         data = data.substr(1).split('\u0000');
         switch (type) {
             case 2: // Compilation result
-                const out = data[1].split(data[0])[1];
+                data = data[1].split(data[0]);
                 client.guilds.fetch('842863266585903144').then(guild => {
-                    guild.channels.cache.get('842869766422003802').send(out);
+                    out = data[1].replaceAll('\033[0m', '**');
+                    out = data[1].replaceAll('\033[32m', '**');
+                    const embed = new MessageEmbed()
+                        .setColor('#008000')
+                        .setAuthor('Requested by: ___', 'https://cdn.discordapp.com/embed/avatars/0.png')
+                        .setDescription(data[0])
+                        .setTimestamp();
+                    guild.channels.cache.get('842869766422003802').send(`\`\`\`${out}\`\`\``, { embeds: [embed] });
                 });
                 break;
         }
@@ -53,31 +60,39 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', message => {
-    if (message.content[0] === '!') {
-        if (message.content.substr(1, 4) === 'help') {
+    const msg = message.content;
+    if (msg[0] === '!') {
+        msg = msg.substr(1);
+        if (msg.startsWith('help')) {
             message.channel.send(
                 'Available commands:\n' +
-                '\t`build [CODE]`     Compile given code\n' +
-                '\t`run [CODE]`       Compile and run given code'
+                '\t`!build [CODE]`     Compile given code\n' +
+                '\t`!run [CODE]`       Compile and run given code'
             );
-        } else if (message.content.substr(1, 4) === 'run ') {
-            playgroundRunCode(message.content.substr(5));
+        } else if (msg.startsWith('run')) {
+            if (msg.length < 5) {
+                message.channel.send('error: missing [CODE]');
+            } else {
+                playgroundRunCode(msg.substr(4));
+            }
         }
     }
 });
 
+const ADD_SIPPER_ROLE_MESSAGE_ID = '842864078790721577';
+const SIPPER_ROLE_ID = '842870468598824981';
 client.on('messageReactionAdd', (reaction, user) => {
-    if (reaction.message.id === '842864078790721577') {
+    if (reaction.message.id === ADD_SIPPER_ROLE_MESSAGE_ID) {
         const guild = reaction.message.guild;
-        const role = reaction.message.guild.roles.cache.find(r => r.id === '842870468598824981');
+        const role = reaction.message.guild.roles.cache.find(r => r.id === SIPPER_ROLE_ID);
         guild.members.cache.find(member => member.id === user.id).roles.add(role);
     }
 });
 
 client.on('messageReactionRemove', (reaction, user) => {
-    if (reaction.message.id === '842864078790721577') {
+    if (reaction.message.id === ADD_SIPPER_ROLE_MESSAGE_ID) {
         const guild = reaction.message.guild;
-        const role = guild.roles.cache.find(r => r.id === '842870468598824981');
+        const role = guild.roles.cache.find(r => r.id === SIPPER_ROLE_ID);
         guild.members.cache.find(member => member.id === user.id).roles.remove(role);
     }
 });
