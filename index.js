@@ -29,7 +29,7 @@ function connectToPlayground() {
                         .setAuthor('Requested by: ___', 'https://cdn.discordapp.com/embed/avatars/0.png')
                         .setDescription(data[0])
                         .setTimestamp();
-                    guild.channels.cache.get('842869766422003802').send(`\`\`\`${out}\`\`\``, { embeds: [embed] });
+                    guild.channels.cache.get('842869766422003802').send(`\`\`\`${out}\`\`\``, embed);
                 });
                 break;
         }
