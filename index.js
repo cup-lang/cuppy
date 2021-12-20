@@ -28,7 +28,10 @@ function connectToPlayground() {
                         .setColor('#008000')
                         .setAuthor('Requested by: ___', 'https://cdn.discordapp.com/embed/avatars/0.png')
                         .setDescription(data[0]);
-                    guild.channels.cache.get('842869766422003802').send({ content: `\`\`\`${data[1]}\`\`\``, embeds: [embed] });
+                    if (data[1].length > 0) {
+                        data[1] = '```' + data[1].replaceAll('`', '\\`') + '```';
+                    }
+                    guild.channels.cache.get('842869766422003802').send({ content: data[1], embeds: [embed] });
                 });
                 break;
         }
