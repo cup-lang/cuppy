@@ -9,24 +9,15 @@ const client = new Client({
 });
 const WebSocket = require('ws');
 let ws;
-
+const guild_id = '842863266585903144'; //842863266585903144 default for cup
+const channel_id = '842869766422003802'; //842869766422003802 default for cup
+let currentuser;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+/*
+now theres a variable called ```currentUser``` and it is set to the author of the msg and referenced by ```connectToPlayground()``` and it does not send the message multiple times for different users.
+*/
 function connectToPlayground() {
     ws = new WebSocket('wss://cup-lang.org');
-    ws.on('message', (data) => {
-        data = data.toString();
-        const type = data.charCodeAt();
-        data = data.substr(1).split('\u0000');
-        //IDK why i left this
-    });
-    ws.onclose = () => {
-        setTimeout(connectToPlayground, 1000);
-    };
-}
-connectToPlayground();
-
-function playgroundRunCode(code, message) {
-    ws.send(`\u0000${code}`);
     ws.on('message', (data) => {
         data = data.toString();
         const type = data.charCodeAt();
@@ -34,26 +25,38 @@ function playgroundRunCode(code, message) {
         switch (type) {
             case 2: // Compilation result
                 data = data[1].split(data[0]);
-                // client.guilds.fetch('842863266585903144').then(guild => {
+                client.guilds.fetch(guild_id).then(guild => {
                     data[0] = data[0].replaceAll('\033[0m', '**');
                     data[0] = data[0].replaceAll('\033[32m', '**');
-                    authortext = 'Requested by: ' + message.author.username
                     const embed = new MessageEmbed()
                         .setColor('#008000')
-                        .setAuthor(authortext, 'https://cdn.discordapp.com/embed/avatars/0.png')
+                        .setAuthor('Requested by: ' + currentuser, 'https://cdn.discordapp.com/embed/avatars/0.png')
                         .setDescription(data[0]);
                     if (data[1].length > 0) {
                         data[1] = '```' + data[1].replaceAll('`', '\\`') + '```';
                     }
-                    message.channel.send({ content: data[1], embeds: [embed] });
-                // });
+                    guild.channels.cache.get(channel_id).send({ content: data[1], embeds: [embed] });
+                });
                 break;
         }
     });
+    ws.onclose = () => {
+        setTimeout(connectToPlayground, 1000);
+    };
+}
+connectToPlayground();
+
+function playgroundRunCode(code) {
+    ws.send(`\u0000${code}`);
 }
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
+
+    // client.guilds.fetch('842863266585903144').then(guild => {
+    //     guild.channels.cache.get('842863477818523708').messages.fetch('842864078790721577');
+    // });
+
     client.user.setPresence({
         activities: [{
             name: 'discord.gg/cup',
@@ -84,7 +87,8 @@ client.on('messageCreate', message => {
                         msg = msg.substring(1, msg.length - 1);
                     }
                 }
-                playgroundRunCode(msg, message);
+                currentuser = message.author.username
+                playgroundRunCode(msg);
             }
         }
     }
