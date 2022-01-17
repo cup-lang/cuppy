@@ -11,6 +11,8 @@ const WebSocket = require('ws');
 let ws;
 let guild_id
 let channel_id
+let ready
+ready = 1
 
 if (process.argv[2]) {
 guild_id = process.argv[2]
@@ -45,6 +47,7 @@ function connectToPlayground() {
                     if (data[1].length > 0) {
                         data[1] = '```' + data[1].replaceAll('`', '\\`') + '```';
                     }
+                    ready = 1
                     guild.channels.cache.get(channel_id).send({ content: data[1], embeds: [embed] });
                 });
                 break;
@@ -89,13 +92,16 @@ client.on('messageCreate', message => {
             if (msg.length < 5) {
                 message.channel.send('error: missing argument [CODE]');
             } else {
-                msg = msg.substr(4);
-                if (msg[0] == '`' && msg[msg.length - 1] == '`') {
-                    if (msg[1] == '`'&& msg[msg.length - 2] == '`' && msg[2] == '`'&& msg[msg.length - 3] == '`') {
-                        msg = msg.substring(3, msg.length - 3);
-                    } else {
-                        msg = msg.substring(1, msg.length - 1);
-                    }
+                if (ready == 1){
+                  ready = 0
+                  msg = msg.substr(4);
+                  if (msg[0] == '`' && msg[msg.length - 1] == '`') {
+                      if (msg[1] == '`'&& msg[msg.length - 2] == '`' && msg[2] == '`'&& msg[msg.length - 3] == '`') {
+                           msg = msg.substring(3, msg.length - 3);
+                      } else {
+                         msg = msg.substring(1, msg.length - 1);
+                     }
+                   }
                 }
                 currentuser = message.author.username
                 playgroundRunCode(msg);
