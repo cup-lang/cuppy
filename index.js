@@ -9,8 +9,18 @@ const client = new Client({
 });
 const WebSocket = require('ws');
 let ws;
-const guild_id = '842863266585903144'; //842863266585903144 default for cup
-const channel_id = '842869766422003802'; //842869766422003802 default for cup
+let guild_id
+let channel_id
+
+if (process.argv[2]) {
+guild_id = process.argv[2]
+channel_id = process.argv[3]
+console.log("Using custom channel and server ids")
+}else{
+console.log("Using default channel and server ids")
+guild_id = '842863266585903144'; //842863266585903144 default for cup
+channel_id = '842869766422003802'; //842869766422003802 default for cup
+}
 let currentuser;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 /*
