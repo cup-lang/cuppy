@@ -74,6 +74,7 @@ client.on('messageCreate', message => {
     } else if ((command.length === 3 && command.startsWith('run')) || command.startsWith('run ')) {
         if (command.length <= 4) {
             message.channel.send('error: missing argument [CODE]');
+            return;
         } else {
             let code = command.substr(4);
             if (code[0] == '`' && code[code.length - 1] == '`') {
@@ -86,7 +87,8 @@ client.on('messageCreate', message => {
             playgroundRunCode(message, code);
         }
     } else {
-        message.channel.send(`Command \`!${command.split(' ')[0]}\` was not recognized. Type \`!help\` too see available commands.`);
+        message.channel.send(`Command \`!${msg.split(' ')[0]}\` was not recognized. Type \`!help\` too see available commands.`);
+        return;
     }
 });
 
