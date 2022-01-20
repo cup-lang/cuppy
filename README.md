@@ -1,7 +1,12 @@
 <h1 align="center">Cuppy&nbsp;<img align="center" src="https://raw.githubusercontent.com/cup-lang/cuppy/main/cuppy.png" width="64"></h1>
-<p align="center">Official Cup Discord Bot. Check it in action <a href="https://discord.gg/cup">here</a> in the <code>#commands</code> channel.</p>
+<p align="center">Cup Discord Bot. Check it out in action <a href="https://discord.gg/cup">here</a> in the <code>#commands</code> channel.</p>
 
 <br>
+
+## Usage
+- `!help` - Lists available commands.
+- `!build [CODE]` - Compiles given code.
+- `!run [CODE]` - Compiles and runs given code.
 
 ## Installing
 ```
