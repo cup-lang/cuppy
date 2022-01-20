@@ -55,24 +55,28 @@ client.on('ready', () => {
     });
 });
 
+const BOT_ID = '855932735138168852';
 client.on('messageCreate', message => {
-    let msg = message.content;
-    if (msg.length <= 1 || msg[0] !== '!') {
+    if (message.author.id === BOT_ID) {
         return;
     }
-    msg = msg.substr(1);
-    if (msg.startsWith('help')) {
+    let content = message.content;
+    if (content.length <= 1 || content[0] !== '!') {
+        return;
+    }
+    const command = content.substr(1);
+    if (command.startsWith('help')) {
         message.channel.send(
             'Available commands:\n' +
             '\t`!build [CODE]`     Compile given code\n' +
             '\t`!run [CODE]`       Compile and run given code'
         );
-    } else if ((msg.length === 3 && msg.startsWith('run')) || msg.startsWith('run ')) {
-        if (msg.length <= 4) {
+    } else if ((command.length === 3 && command.startsWith('run')) || command.startsWith('run ')) {
+        if (command.length <= 4) {
             message.channel.send('error: missing argument [CODE]');
             return;
         } else {
-            let code = msg.substr(4);
+            let code = command.substr(4);
             if (code[0] == '`' && code[code.length - 1] == '`') {
                 if (code[1] == '`' && code[code.length - 2] == '`' && code[2] == '`' && code[code.length - 3] == '`') {
                     code = code.substring(3, code.length - 3);
@@ -84,6 +88,7 @@ client.on('messageCreate', message => {
         }
     } else {
         message.channel.send(`Command \`!${msg.split(' ')[0]}\` was not recognized. Type \`!help\` too see available commands.`);
+        return;
     }
 });
 
