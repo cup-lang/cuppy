@@ -25,7 +25,7 @@ function playgroundRunCode(message, code) {
                 data[0] = data[0].replaceAll('\033[32m', '**');
                 const embed = new MessageEmbed()
                     .setColor('#008000')
-                    .setAuthor(`Requested by: <@${message.author.id}>`, message.author.avatarURL())
+                    .setAuthor(`Requested by: ${message.author.username}`, message.author.avatarURL())
                     .setDescription(data[0]);
                 if (data[1].length > 0) {
                     data[1] = '```' + data[1].replaceAll('`', '\\`') + '```';
