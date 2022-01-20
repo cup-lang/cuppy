@@ -43,10 +43,6 @@ const INFO_MESSAGE_ID = '842864078790721577';
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
-    client.guilds.fetch(GUILD_ID).then(guild => {
-        guild.channels.cache.get(INFO_CHANNEL_ID).messages.fetch(INFO_MESSAGE_ID);
-    });
-
     client.user.setPresence({
         activities: [{
             name: 'discord.gg/cup',
