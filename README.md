@@ -1,7 +1,5 @@
-<img src="https://raw.githubusercontent.com/cup-lang/cuppy/main/cuppy.png" width="128" align="right">
-
-# Cuppy <img src="https://raw.githubusercontent.com/cup-lang/cuppy/main/cuppy.png" width="32" height="32" align="center">
-Official Cup Discord Bot
+<h1 align="center">Cuppy&nbsp;<img align="center" src="https://raw.githubusercontent.com/cup-lang/cuppy/main/cuppy.png" width="64"></h1>
+<p align="center">Official Cup Discord Bot. Check it in action <a href="https://discord.gg/cup">here</a> in the <code>#commands</code> channel.</p>
 
 <br>
 
