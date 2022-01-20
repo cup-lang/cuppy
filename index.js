@@ -8,49 +8,43 @@ const client = new Client({
     ]
 });
 const WebSocket = require('ws');
-let ws;
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
-
-function connectToPlayground() {
-    ws = new WebSocket('wss://cup-lang.org');
-    ws.on('message', (data) => {
+function playgroundRunCode(message, code) {
+    let ws = new WebSocket('wss://cup-lang.org');
+    ws.on('open', () => {
+        ws.send(`\u0000${code}`);
+    });
+    ws.on('message', data => {
         data = data.toString();
         const type = data.charCodeAt();
         data = data.substr(1).split('\u0000');
         switch (type) {
             case 2: // Compilation result
                 data = data[1].split(data[0]);
-                client.guilds.fetch('842863266585903144').then(guild => {
-                    data[0] = data[0].replaceAll('\033[0m', '**');
-                    data[0] = data[0].replaceAll('\033[32m', '**');
-                    const embed = new MessageEmbed()
-                        .setColor('#008000')
-                        .setAuthor('Requested by: ___', 'https://cdn.discordapp.com/embed/avatars/0.png')
-                        .setDescription(data[0]);
-                    if (data[1].length > 0) {
-                        data[1] = '```' + data[1].replaceAll('`', '\\`') + '```';
-                    }
-                    guild.channels.cache.get('842869766422003802').send({ content: data[1], embeds: [embed] });
-                });
+                data[0] = data[0].replaceAll('\033[0m', '**');
+                data[0] = data[0].replaceAll('\033[32m', '**');
+                const embed = new MessageEmbed()
+                    .setColor('#008000')
+                    .setAuthor(`Requested by: ${message.author.username}`, message.author.avatarURL())
+                    .setDescription(data[0]);
+                if (data[1].length > 0) {
+                    data[1] = '```' + data[1].replaceAll('`', '\\`') + '```';
+                }
+                message.channel.send({ content: data[1], embeds: [embed] });
+                ws.close();
                 break;
         }
     });
-    ws.onclose = () => {
-        setTimeout(connectToPlayground, 1000);
-    };
-}
-connectToPlayground();
-
-function playgroundRunCode(code) {
-    ws.send(`\u0000${code}`);
 }
 
+const GUILD_ID = '842863266585903144';
+const INFO_CHANNEL_ID = '842863477818523708';
+const INFO_MESSAGE_ID = '842864078790721577';
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
-    client.guilds.fetch('842863266585903144').then(guild => {
-        guild.channels.cache.get('842863477818523708').messages.fetch('842864078790721577');
+    client.guilds.fetch(GUILD_ID).then(guild => {
+        guild.channels.cache.get(INFO_CHANNEL_ID).messages.fetch(INFO_MESSAGE_ID);
     });
 
     client.user.setPresence({
@@ -63,29 +57,33 @@ client.on('ready', () => {
 
 client.on('messageCreate', message => {
     let msg = message.content;
-    if (msg[0] === '!') {
-        msg = msg.substr(1);
-        if (msg.startsWith('help')) {
-            message.channel.send(
-                'Available commands:\n' +
-                '\t`!build [CODE]`     Compile given code\n' +
-                '\t`!run [CODE]`       Compile and run given code'
-            );
-        } else if (msg.startsWith('run')) {
-            if (msg.length < 5) {
-                message.channel.send('error: missing argument [CODE]');
-            } else {
-                msg = msg.substr(4);
-                if (msg[0] == '`' && msg[msg.length - 1] == '`') {
-                    if (msg[1] == '`'&& msg[msg.length - 2] == '`' && msg[2] == '`'&& msg[msg.length - 3] == '`') {
-                        msg = msg.substring(3, msg.length - 3);
-                    } else {
-                        msg = msg.substring(1, msg.length - 1);
-                    }
+    if (msg.length <= 1 || msg[0] !== '!') {
+        return;
+    }
+    msg = msg.substr(1);
+    if (msg.startsWith('help')) {
+        message.channel.send(
+            'Available commands:\n' +
+            '\t`!build [CODE]`     Compile given code\n' +
+            '\t`!run [CODE]`       Compile and run given code'
+        );
+    } else if ((msg.length === 3 && msg.startsWith('run')) || msg.startsWith('run ')) {
+        if (msg.length <= 4) {
+            message.channel.send('error: missing argument [CODE]');
+            return;
+        } else {
+            let code = msg.substr(4);
+            if (code[0] == '`' && code[code.length - 1] == '`') {
+                if (code[1] == '`' && code[code.length - 2] == '`' && code[2] == '`' && code[code.length - 3] == '`') {
+                    code = code.substring(3, code.length - 3);
+                } else {
+                    code = code.substring(1, code.length - 1);
                 }
-                playgroundRunCode(msg);
             }
+            playgroundRunCode(message, code);
         }
+    } else {
+        message.channel.send(`Command \`!${msg.split(' ')[0]}\` was not recognized. Type \`!help\` too see available commands.`);
     }
 });
 
