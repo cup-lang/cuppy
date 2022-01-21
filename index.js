@@ -29,10 +29,10 @@ function playgroundRunCode(message, code) {
                 const embed = new MessageEmbed()
                     .setColor(error ? '#7f0000' : '#008000')
                     .setAuthor(`Requested by: ${message.author.username}`, message.author.avatarURL())
-                    .setDescription(data[0]);
+                    .setDescription(`\`\`\`${data[0]}\`\`\``);
                 let output = '';
                 if (data.length > 1 && data[1].length > 0) {
-                    output = `\`\`\`${data[1].replace(/\\(\*|_|`|~|\\)/g, '$1').replace(/(\*|_|`|~|\\)/g, '\\$1')}\`\`\``;
+                    output = `\`\`\`${data[1].replaceAll('`', '\\`')}\`\`\``;
                 } else if (error) {
                     output = '**Compilation error** 😢';
                 } else {
