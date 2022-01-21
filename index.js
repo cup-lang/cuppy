@@ -23,15 +23,18 @@ function playgroundRunCode(message, code) {
                 data = data[1].split(data[0]);
                 data[0] = data[0].replaceAll('\033[0m', '**');
                 data[0] = data[0].replaceAll('\033[32m', '**');
+                const error = data.length === 1;
                 const embed = new MessageEmbed()
-                    .setColor('#008000')
+                    .setColor(error ? '#7f0000' : '#008000')
                     .setAuthor(`Requested by: ${message.author.username}`, message.author.avatarURL())
                     .setDescription(data[0]);
                 let output = '';
                 if (data.length > 1 && data[1].length > 0) {
                     output = '```' + data[1].replaceAll('`', '\\`') + '```';
+                } else if (error) {
+                    output = '**Compilation error!**';
                 } else {
-                    output = '**No output.**';
+                    output = '**No program output.**';
                 }
                 if (output.length > 2000) {
                     output = output.substr(0, 1955) + '```**Discord\'s max message length exceeded!**';
