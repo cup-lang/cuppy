@@ -31,8 +31,8 @@ function playgroundRunCode(message, code) {
                 if (data.length > 1 && data[1].length > 0) {
                     output = '```' + data[1].replaceAll('`', '\\`') + '```';
                 }
-                if (output.length > 4000) {
-                    output += '**Max output length exceeded**';
+                if (output.length > 2000) {
+                    output = output.substr(0, 1958) + '```**Discord max message length exceeded**';
                 }
                 message.channel.send({ content: output, embeds: [embed] });
                 ws.close();
