@@ -25,7 +25,7 @@ function playgroundRunCode(message, code) {
                 const error = data.length === 1;
                 const embed = new MessageEmbed()
                     .setColor(error ? '#7f0000' : '#008000')
-                    .setAuthor(`Requested by: ${message.author.username}`, message.author.avatarURL())
+                    .setAuthor(`Requested by: ${message.author.mention}`, message.author.avatarURL())
                     .setDescription(`\`\`\`${data[0]}\`\`\``);
                 let output = '';
                 if (data.length > 1 && data[1].length > 0) {
