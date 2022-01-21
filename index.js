@@ -32,7 +32,7 @@ function playgroundRunCode(message, code) {
                     .setDescription(data[0]);
                 let output = '';
                 if (data.length > 1 && data[1].length > 0) {
-                    output = '```' + data[1].replaceAll('`', '\\`') + '```';
+                    output = `\`\`\`${data[1].replace(/(\*|_|`|~|\\)/g, '\\$1')}\`\`\``;
                 } else if (error) {
                     output = '**Compilation error** 😢';
                 } else {
