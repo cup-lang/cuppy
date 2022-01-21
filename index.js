@@ -21,10 +21,7 @@ function playgroundRunCode(message, code) {
         switch (type) {
             case 2: // Compilation result
                 data = data[1].split(data[0]);
-                data[0] = data[0].replaceAll('\033[0m', '**');
-                data[0] = data[0].replaceAll('\033[35m', '**');
-                data[0] = data[0].replaceAll('\033[32m', '**');
-                data[0] = data[0].replaceAll('\033[0;31m', '**');
+                data[0] = data[0].replaceAll('\033[0m', '').replaceAll('\033[35m', '').replaceAll('\033[32m', '').replaceAll('\033[0;31m', '');
                 const error = data.length === 1;
                 const embed = new MessageEmbed()
                     .setColor(error ? '#7f0000' : '#008000')
