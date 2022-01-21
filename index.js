@@ -27,10 +27,14 @@ function playgroundRunCode(message, code) {
                     .setColor('#008000')
                     .setAuthor(`Requested by: ${message.author.username}`, message.author.avatarURL())
                     .setDescription(data[0]);
-                if (data[1].length > 0) {
-                    data[1] = '```' + data[1].replaceAll('`', '\\`') + '```';
+                let output = '';
+                if (data.length > 1 && data[1].length > 0) {
+                    output = '```' + data[1].replaceAll('`', '\\`') + '```';
                 }
-                message.channel.send({ content: data[1], embeds: [embed] });
+                if (output.length > 4000) {
+                    output += '**Max output length exceeded**';
+                }
+                message.channel.send({ content: output, embeds: [embed] });
                 ws.close();
                 break;
         }
