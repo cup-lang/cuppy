@@ -4,7 +4,8 @@ const client = new Client({
     intents: [
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_BANS,
     ],
 });
 const WebSocket = require('ws');
@@ -45,17 +46,15 @@ function playgroundRunCode(message, code) {
     });
 }
 
-const BOT_ID = '855932735138168852';
-const GUILD_ID = '842863266585903144';
-const INFO_CHANNEL_ID = '842863477818523708';
-const INFO_MESSAGE_ID = '842864078790721577';
-const SIPPER_ROLE_ID = '842870468598824981';
+let logs_channel;
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
-    client.guilds.fetch(GUILD_ID).then(guild => {
-        guild.channels.cache.get(INFO_CHANNEL_ID).messages.fetch(INFO_MESSAGE_ID);
+    client.guilds.fetch('842863266585903144').then(guild => {
+        logs_channel = guild.channels.cache.get('844039591223623741');
+
+        logs_channel.send(`${client.user} is now online.`);
     });
 
     client.user.setPresence({
@@ -67,7 +66,7 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', message => {
-    if (message.author.id === BOT_ID) {
+    if (message.author.id === client.user.id) {
         return;
     }
     let content = message.content;
@@ -100,20 +99,20 @@ client.on('messageCreate', message => {
     }
 });
 
-client.on('messageReactionAdd', (reaction, user) => {
-    if (reaction.message.id === INFO_MESSAGE_ID) {
-        const guild = reaction.message.guild;
-        const role = reaction.message.guild.roles.cache.find(r => r.id === SIPPER_ROLE_ID);
-        guild.members.cache.find(member => member.id === user.id).roles.add(role);
-    }
+client.on('guildMemberAdd', member => {
+    logs_channel.send(`${member} joined the server.`);
 });
 
-client.on('messageReactionRemove', (reaction, user) => {
-    if (reaction.message.id === INFO_MESSAGE_ID) {
-        const guild = reaction.message.guild;
-        const role = guild.roles.cache.find(r => r.id === SIPPER_ROLE_ID);
-        guild.members.cache.find(member => member.id === user.id).roles.remove(role);
-    }
+client.on('guildMemberRemove', member => {
+    logs_channel.send(`${member} left the server.`);
+});
+
+client.on('guildBanAdd', ban => {
+    logs_channel.send(`${ban.user} was banned from the server.`);
+});
+
+client.on('guildBanRemove', ban => {
+    logs_channel.send(`${ban.user} was unbanned from the server.`);
 });
 
 client.login(fs.readFileSync('token').toString());
